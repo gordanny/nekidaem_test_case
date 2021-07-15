@@ -7,10 +7,12 @@ from . import views
 app_name = 'blog'
 
 urlpatterns = [
-    # Home page.
+    # App home page.
     path('', views.index, name='index'),
     # Enable default authentication URL.
     path('auth/', include('django.contrib.auth.urls')),
-
-    path('<str:username>', views.blog, name='blog')
+    # The blog page.
+    path('blogs/<str:username>', views.blog, name='blog'),
+    # List of bloggers.
+    path('bloggers', views.bloggers_list, name='bloggers'),
 ]

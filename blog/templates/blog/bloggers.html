@@ -1,0 +1,22 @@
+{% extends 'blog/base.html' %}
+
+{% block page_header %}
+
+  <h1>Блоггеры:</h1>
+
+{% endblock page_header %}
+
+{% block content %}
+
+  <ul>
+    {% for blogger in bloggers %}
+      <li>
+        <a href="{% url 'blog:blog' blogger.username %}">{{ blogger.username }}</a>
+      </li>
+    {% empty %}
+      <li><h3>Пока нет блоггеров.</h3></li>
+    {% endfor %}
+  </ul>
+
+
+{% endblock content %}

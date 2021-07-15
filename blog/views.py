@@ -14,3 +14,9 @@ def blog(request, username):
     posts = Post.objects.filter(author=user.id).order_by('-pub_date')
     context = {'posts': posts}
     return render(request, 'blog/blog.html', context)
+
+
+def bloggers_list(request):
+    bloggers = User.objects.filter(is_superuser='f')
+    context = {'bloggers': bloggers}
+    return render(request, 'blog/bloggers.html', context)

@@ -12,3 +12,8 @@ class Post(models.Model):
         if len(self.text) > 50:
             return f'{self.text[:50]}...'
         return self.text
+
+
+class Subscribe(models.Model):
+    blogger = models.ForeignKey(User, related_name='blogger', on_delete=models.CASCADE)
+    subscriber = models.ForeignKey(User, related_name='subscriber', on_delete=models.CASCADE)
