@@ -11,4 +11,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     # Enable default authentication URL.
     path('auth/', include('django.contrib.auth.urls')),
+
+    path('<str:username>', views.blog, name='blog')
 ]
