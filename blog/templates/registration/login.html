@@ -1,0 +1,22 @@
+{% extends 'blog/base.html' %}
+
+{% block page_header %}
+
+  <h2>Войти в аккаунт.</h2>
+
+{% endblock page_header %}
+
+{% block content %}
+
+  {% if form.errors %}
+    <p>Неправильные логин и пароль. Попробуйте ещё раз.</p>
+  {% endif %}
+  <form action="{% url 'blog:login' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+      <button name="submit">Войти</button>
+      <input type="hidden" name="next" value="{% url 'blog:index' %}" />
+  </form>
+
+{% endblock content %}
