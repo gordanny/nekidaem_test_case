@@ -1,22 +1,48 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.views import View
 
-from .models import Post
+from .models import Post, Subscribe
 
 
-def index(request):
+class Index(View):
     """Home page of blog app."""
-    return render(request, 'blog/index.html')
+    template = 'blog/index.html'
+
+    def get(self, request):
+        return render(request, self.template)
 
 
-def blog(request, username):
-    user = User.objects.get(username=username)
-    posts = Post.objects.filter(author=user.id).order_by('-pub_date')
-    context = {'posts': posts}
-    return render(request, 'blog/blog.html', context)
+class Blog(View):
+    template = 'blog/blog.html'
+
+    def get(self, request, blogger):
+        blogger = User.objects.get(username=blogger)
+        posts = Post.objects.filter(author=blogger.id).order_by('-pub_date')
+        homepage = blogger == request.user
+        if homepage:
+            subscribed = False
+        else:
+            is_subscribed = Subscribe.objects.filter(blogger_id=blogger.id, subscriber_id=request.user.id)
+            subscribed = True if is_subscribed else False
+        context = {'posts': posts, 'homepage': homepage, 'subscribed': subscribed}
+        return render(request, self.template, context)
+
+    def post(self, request, blogger):
+        blogger = User.objects.get(username=blogger)
+        is_subscribed = Subscribe.objects.filter(blogger_id=blogger.id, subscriber_id=request.user.id)
+        if is_subscribed:
+            is_subscribed.delete()
+        else:
+            s = Subscribe(blogger_id=blogger.id, subscriber_id=request.user.id)
+            s.save()
+        return self.get(request, blogger)
 
 
-def bloggers_list(request):
-    bloggers = User.objects.filter(is_superuser='f')
-    context = {'bloggers': bloggers}
-    return render(request, 'blog/bloggers.html', context)
+class BloggersList(View):
+    template = 'blog/bloggers.html'
+
+    def get(self, request):
+        bloggers = User.objects.filter(is_superuser='f')
+        context = {'bloggers': bloggers}
+        return render(request, self.template, context)

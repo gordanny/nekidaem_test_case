@@ -8,11 +8,11 @@ app_name = 'blog'
 
 urlpatterns = [
     # App home page.
-    path('', views.index, name='index'),
+    path('', views.Index.as_view(), name='index'),
     # Enable default authentication URL.
     path('auth/', include('django.contrib.auth.urls')),
     # The blog page.
-    path('blogs/<str:username>', views.blog, name='blog'),
+    path('blogs/<str:blogger>', views.Blog.as_view(), name='blog'),
     # List of bloggers.
-    path('bloggers', views.bloggers_list, name='bloggers'),
+    path('bloggers', views.BloggersList.as_view(), name='bloggers'),
 ]

@@ -1,5 +1,21 @@
 {% extends 'blog/base.html' %}
 
+{% block page_header %}
+
+  <h2>{{ blogger }}</h2>
+  {% if not homepage %}
+    <form method="post">
+      {% csrf_token %}
+      {% if subscribed %}
+        <button type="submit" name="sign" value="out">Отписаться</button>
+      {% else %}
+        <button type="submit" name="sign" value="in">Подписаться</button>
+      {% endif %}
+    </form>
+  {% endif %}
+
+{% endblock page_header %}
+
 {% block content %}
 
   <ul>
