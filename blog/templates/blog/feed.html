@@ -17,6 +17,13 @@
         </div>
         <h3>{{ post.text }}</h3>
         <h5>{{ post.pub_date|date:'M d, Y H:i' }}</h5>
+        <form action="{% url 'blog:feed' %}" method="post">
+          {% csrf_token %}
+          <small>
+            <input type="hidden" name="post_id" value="{{ post.id }} ">
+            <input type="submit" value="Отметить как прочитанную">
+          </small>
+        </form>
       </li>
     {% empty %}
       <li><h3>Пока нет постов.</h3></li>

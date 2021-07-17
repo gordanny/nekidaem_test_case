@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
-from django.db.models import Prefetch
+from django.db.models import Subquery
 from django.views import View
 
 from .models import Post, Subscribe, ReadedPosts
@@ -35,8 +35,8 @@ class Blog(View):
         if is_subscribed:
             is_subscribed.delete()
         else:
-            s = Subscribe(blogger_id=blogger.id, subscriber_id=request.user.id)
-            s.save()
+            subscribe = Subscribe(blogger_id=blogger.id, subscriber_id=request.user.id)
+            subscribe.save()
         return self.get(request, blogger)
 
 
@@ -57,13 +57,21 @@ class Feed(View):
         # Make an empty queryset.
         posts = Post.objects.filter(author=False)
         for subscription in subscriptions:
-            subscription_posts = Post.objects.filter(author=subscription.blogger.id)[:20]
-            posts = posts.union(subscription_posts).order_by('-pub_date')
+            readed_posts = ReadedPosts.objects.filter(subscription_id=subscription.id)
+            subscription_posts = Post.objects.filter(author=subscription.blogger.id).order_by('-pub_date')
+            unreaded_posts = subscription_posts.exclude(id__in=Subquery(readed_posts.values('post_id')))[:20]
+            posts = posts.union(unreaded_posts).order_by('-pub_date')
         context = {'posts': posts[:20]}
         return render(request, self.template, context)
 
-    def post(self, request, post_id):
-        pass
+    def post(self, request):
+        post_id = request.POST['post_id']
+        print(post_id)
+        post = get_object_or_404(Post, id=post_id)
+        subscription = Subscribe.objects.filter(blogger_id=post.author.id, subscriber_id=request.user.id)
+        readed_post = ReadedPosts(post_id=post_id, subscription_id=subscription[0].id)
+        readed_post.save()
+        return self.get(request)
 
 
 class NewPost(View):
