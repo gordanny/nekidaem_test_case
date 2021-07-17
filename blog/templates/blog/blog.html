@@ -1,17 +1,22 @@
 {% extends 'blog/base.html' %}
 
 {% block page_header %}
-
-  <h2>{{ blogger }}</h2>
-  {% if not homepage %}
+  {% if blogger != request.user %}
+    <h2>{{ blogger }}</h2>
     <form method="post">
       {% csrf_token %}
-      {% if subscribed %}
-        <button type="submit" name="sign" value="out">Отписаться</button>
-      {% else %}
-        <button type="submit" name="sign" value="in">Подписаться</button>
+      {% if user.is_authenticated %}
+        <button type="submit">
+          {% if is_subscribed %}
+            Отписаться
+          {% else %}
+            Подписаться
+          {% endif %}
+        </button>
       {% endif %}
     </form>
+  {% else %}
+    <a href="{% url 'blog:new_post'">Добавить запись</a>
   {% endif %}
 
 {% endblock page_header %}
@@ -23,7 +28,7 @@
       <li>
         <h2>{{ post.title }}</h2>
         <h3>{{ post.text }}</h3>
-        <h5>{{ post.pub_date }}</h5>
+        <h5>{{ post.pub_date|date:'M d, Y H:i' }}</h5>
       </li>
     {% empty %}
       <li><h3>Пока нет постов.</h3></li>

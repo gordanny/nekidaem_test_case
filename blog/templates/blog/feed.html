@@ -16,7 +16,7 @@
           </div>
         </div>
         <h3>{{ post.text }}</h3>
-        <h5>{{ post.pub_date }}</h5>
+        <h5>{{ post.pub_date|date:'M d, Y H:i' }}</h5>
       </li>
     {% empty %}
       <li><h3>Пока нет постов.</h3></li>
