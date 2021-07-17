@@ -1,0 +1,17 @@
+{% extends 'blog/base.html' %}
+
+{% block page_header %}
+
+  <h3>Редактирование записи:</h3>
+
+{% endblock page_header %}
+
+{% block content %}
+
+  <form action="{% url 'blog:edit_post' post.id %}" method="post" class="form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button name="submit">Сохранить изменения</button>
+  </form>
+
+{% endblock content %}

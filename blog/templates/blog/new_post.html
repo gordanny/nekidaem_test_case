@@ -1,0 +1,17 @@
+{% extends 'blog/base.html' %}
+
+{% block page_header %}
+
+  <h3>Добавление новой записи:</h3>
+
+{% endblock page_header %}
+
+{% block content %}
+
+  <form action="{% url 'blog:new_post' %}" method="post" class="form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button name="submit">Добавить запись</button>
+  </form>
+
+{% endblock content %}
