@@ -1,0 +1,27 @@
+{% extends 'blog/base.html' %}
+
+{% block page_header %}
+
+{% endblock page_header %}
+
+{% block content %}
+
+  <ul>
+    {% for post in posts %}
+      <li>
+        <div>
+          <h2>{{ post.title }}</h2>
+          <div>
+            <h6><a href="{% url 'blog:blog' post.author %}">{{ post.author }}</a></h6>
+          </div>
+        </div>
+        <h3>{{ post.text }}</h3>
+        <h5>{{ post.pub_date }}</h5>
+      </li>
+    {% empty %}
+      <li><h3>Пока нет постов.</h3></li>
+    {% endfor %}
+  </ul>
+
+
+{% endblock content %}

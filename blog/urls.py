@@ -12,7 +12,9 @@ urlpatterns = [
     # Enable default authentication URL.
     path('auth/', include('django.contrib.auth.urls')),
     # The blog page.
-    path('blogs/<str:blogger>', views.Blog.as_view(), name='blog'),
+    path('<str:blogger>/', views.Blog.as_view(), name='blog'),
     # List of bloggers.
     path('bloggers', views.BloggersList.as_view(), name='bloggers'),
+    # Feed with unread posts from subscriptions.
+    path('feed', views.Feed.as_view(), name='feed'),
 ]

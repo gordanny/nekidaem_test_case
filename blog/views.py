@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
+from django.db.models import Prefetch
 from django.views import View
 
-from .models import Post, Subscribe
+from .models import Post, Subscribe, ReadedPosts
 
 
 class Index(View):
@@ -10,6 +11,7 @@ class Index(View):
     template = 'blog/index.html'
 
     def get(self, request):
+
         return render(request, self.template)
 
 
@@ -18,7 +20,7 @@ class Blog(View):
 
     def get(self, request, blogger):
         blogger = User.objects.get(username=blogger)
-        posts = Post.objects.filter(author=blogger.id).order_by('-pub_date')
+        posts = Post.objects.filter(author=blogger.id).order_by('-pub_date')[:20]
         homepage = blogger == request.user
         if homepage:
             subscribed = False
@@ -45,4 +47,18 @@ class BloggersList(View):
     def get(self, request):
         bloggers = User.objects.filter(is_superuser='f')
         context = {'bloggers': bloggers}
+        return render(request, self.template, context)
+
+
+class Feed(View):
+    template = 'blog/feed.html'
+
+    def get(self, request):
+        subscriptions = Subscribe.objects.filter(subscriber_id=request.user.id)
+        # Make an empty queryset.
+        posts = Post.objects.filter(author=False)
+        for subscription in subscriptions:
+            subscription_posts = Post.objects.filter(author=subscription.blogger.id)[:20]
+            posts = posts.union(subscription_posts).order_by('pub_date')
+        context = {'posts': posts[:20]}
         return render(request, self.template, context)

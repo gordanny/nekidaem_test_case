@@ -17,3 +17,8 @@ class Post(models.Model):
 class Subscribe(models.Model):
     blogger = models.ForeignKey(User, related_name='blogger', on_delete=models.CASCADE)
     subscriber = models.ForeignKey(User, related_name='subscriber', on_delete=models.CASCADE)
+
+
+class ReadedPosts(models.Model):
+    subscription = models.ForeignKey(Subscribe, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
